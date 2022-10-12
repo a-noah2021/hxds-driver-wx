@@ -40,7 +40,7 @@ createApp(app).$mount();
 
 
 // let baseUrl = "http://你自己电脑的IP地址（绝对不能写localhost和127.0.0.1）/hxds-driver"
-var baseUrl = "http://223.104.39.177:8201/hxds-driver";
+var baseUrl = "http://b7y64u.natappfree.cc/hxds-driver"; //"http://223.104.42.47:8201/hxds-driver"
 _vue.default.prototype.url = {
   registerNewDriver: "".concat(baseUrl, "/driver/registerNewDriver") };
 

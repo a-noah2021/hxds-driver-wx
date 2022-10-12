@@ -262,7 +262,7 @@ var _default =
           console.log(avatarUrl);
           var data = {
             code: that.code,
-            nickName: nickName,
+            nickname: nickName,
             photo: avatarUrl };
 
           that.ajax(that.url.registerNewDriver, "POST", data, function (resp) {
