@@ -31,9 +31,11 @@ export function createApp() {
 
 
 // let baseUrl = "http://你自己电脑的IP地址（绝对不能写localhost和127.0.0.1）/hxds-driver"
-let baseUrl = "http://b7y64u.natappfree.cc/hxds-driver"  //"http://223.104.42.47:8201/hxds-driver"
+let baseUrl = "http://gxr34y.natappfree.cc/hxds-driver"  //"http://127.0.0.1:8201/hxds-driver"
 Vue.prototype.url = {
-	registerNewDriver: `${baseUrl}/driver/registerNewDriver`
+	registerNewDriver: `${baseUrl}/driver/registerNewDriver`,
+	uploadCosPrivateFile: `${baseUrl}/cos/uploadCosPrivateFile`,
+	deleteCosPrivateFile: `${baseUrl}/cos/deleteCosPrivateFile`
 }
 
 Vue.prototype.tencent = {
@@ -78,10 +80,10 @@ Vue.prototype.ajax = function(url, method, data, fun, load) {
 					uni.setStorageSync("token", token)
 				}
 				fun(resp)
-			} else if (resp.data.error=="该微信无法注册") {
+			} else if (resp.data.error=="该微信已完成注册") {
 				uni.showToast({
 					icon:"none",
-					title:"该微信无法注册"
+					title:"该微信已完成注册"
 				})
 			} else {
 				uni.showToast({

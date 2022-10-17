@@ -83,7 +83,7 @@ __webpack_require__.r(__webpack_exports__);
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0; //
+/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;function _createForOfIteratorHelper(o, allowArrayLike) {var it;if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) {if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") {if (it) o = it;var i = 0;var F = function F() {};return { s: F, n: function n() {if (i >= o.length) return { done: true };return { done: false, value: o[i++] };}, e: function e(_e) {throw _e;}, f: F };}throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");}var normalCompletion = true,didErr = false,err;return { s: function s() {it = o[Symbol.iterator]();}, n: function n() {var step = it.next();normalCompletion = step.done;return step;}, e: function e(_e2) {didErr = true;err = _e2;}, f: function f() {try {if (!normalCompletion && it.return != null) it.return();} finally {if (didErr) throw err;}} };}function _unsupportedIterableToArray(o, minLen) {if (!o) return;if (typeof o === "string") return _arrayLikeToArray(o, minLen);var n = Object.prototype.toString.call(o).slice(8, -1);if (n === "Object" && o.constructor) n = o.constructor.name;if (n === "Map" || n === "Set") return Array.from(o);if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);}function _arrayLikeToArray(arr, len) {if (len == null || len > arr.length) len = arr.length;for (var i = 0, arr2 = new Array(len); i < len; i++) {arr2[i] = arr[i];}return arr2;} //
 //
 //
 //
@@ -249,8 +249,206 @@ var dayjs = __webpack_require__(/*! dayjs */ 62);var _default =
       realAuth: uni.getStorageSync('realAuth') };
 
   },
-  methods: {},
+  methods: {
+    scanIdcardFront: function scanIdcardFront(resp) {
+      var that = this;
+      var detail = resp.detail;
+      that.idcard.pid = detail.id.text;
+      that.idcard.name = detail.name.text;
+      that.idcard.sex = detail.gender.text;
+      that.idcard.address = detail.address.text;
+      //需要缩略身份证地址，文字太长页面显示不了
+      that.idcard.shortAddress = detail.address.text.substr(0, 15) + '...';
+      that.idcard.birthday = detail.birth.text;
+      //OCR插件拍摄到的身份证正面照片存储地址
+      that.idcard.idcardFront = detail.image_path;
+      //让身份证View标签加载身份证正面照片
+      that.cardBackground[0] = detail.image_path;
+      that.uploadCos(that.url.uploadCosPrivateFile, detail.image_path, 'driverAuth', function (resp) {
+        var data = JSON.parse(resp.data);
+        var path = data.path;
+        that.currentImg['idcardFront'] = path;
+        that.cosImg.push(path);
+      });
+    },
+    scanIdcardBack: function scanIdcardBack(resp) {
+      var that = this;
+      var detail = resp.detail;
+      //OCR插件拍摄到的身份证背面照片存储地址
+      that.idcard.idcardBack = detail.image_path;
+      //View标签加载身份证背面照片
+      that.cardBackground[1] = detail.image_path;
+      var validDate = detail.valid_date.text.split('-')[1];
+      that.idcard.expiration = dayjs(validDate, 'YYYYMMDD').format('YYYY-MM-DD');
+      that.uploadCos(that.url.uploadCosPrivateFile, detail.image_path, 'driverAuth', function (resp) {
+        var data = JSON.parse(resp.data);
+        var path = data.path;
+        that.currentImg['idcardBack'] = path;
+        that.cosImg.push(path);
+      });
+    },
+    scanDrcardFront: function scanDrcardFront(resp) {
+      var that = this;
+      var detail = resp.detail;
+      that.drcard.issueDate = detail.issue_date.text; //初次领证日期
+      that.drcard.carClass = detail.car_class.text; //准驾车型
+      that.drcard.validFrom = detail.valid_from.text; //驾驶证起始有效期
+      that.drcard.validTo = detail.valid_to.text; //驾驶证截止有效期
+      that.drcard.drcardFront = detail.image_path;
+      that.cardBackground[3] = detail.image_path;
+      that.uploadCos(that.url.uploadCosPrivateFile, detail.image_path, 'driverAuth', function (resp) {
+        var data = JSON.parse(resp.data);
+        var path = data.path;
+        that.currentImg['drcardFront'] = path;
+        that.cosImg.push(path);
+      });
+    },
+    updatePhoto: function updatePhoto(type, path) {
+      var that = this;
+      that.uploadCos(that.url.uploadCosPrivateFile, path, 'driverAuth', function (resp) {
+        var data = JSON.parse(resp.data);
+        that.cosImg.push(data.path);
+        if (type == 'idcardHolding') {
+          that.cardBackground[2] = path;
+          that.currentImg['idcardHolding'] = data.path;
+          that.idcard.idcardHolding = data.path;
+        } else if (type == 'drcardBack') {
+          that.cardBackground[4] = path;
+          that.currentImg['drcardBack'] = data.path;
+          that.idcard.drcardBack = data.path;
+        } else if (type == 'drcardHolding') {
+          that.cardBackground[5] = path;
+          that.currentImg['drcardHolding'] = data.path;
+          that.idcard.drcardHolding = data.path;
+        }
+      });
+      that.$forceUpdate(); //强制刷新视图层
+    },
+    takePhoto: function takePhoto(type) {
+      uni.navigateTo({
+        url: '../identity_camera/identity_camera?type=' + type });
 
+    },
+    enterContent: function enterContent(title, key) {
+      var that = this;
+      uni.showModal({
+        title: title,
+        editable: true,
+        content: that.contact[key],
+        success: function success(resp) {
+          if (resp.confirm) {
+            if (key == 'mailAddress') {
+              that.contact['shortMailAddress'] = resp.content.substr(0, 15) + (resp.content.length > 15 ? '...' : '');
+            } else if (key == 'email') {
+              that.contact['shortEmail'] = resp.content.substr(0, 25) + (resp.content.length > 25 ? '...' : '');
+            }
+            that.contact[key] = resp.content;
+          }
+        } });
+
+    },
+    save: function save() {
+      var that = this;
+      //判断是否设置了6张照片
+      if (Object.keys(that.currentImg).length != 6) {
+        that.$refs.uToast.show({
+          title: '证件上传不完整',
+          type: 'error' });
+
+      }
+      //执行前端验证
+      else if (
+        that.checkValidTel(that.contact.tel, '手机号码') &&
+        that.checkValidEmail(that.contact.email, '电子信箱') &&
+        that.checkValidAddress(that.contact.mailAddress, '收信地址') &&
+        that.checkValidName(that.contact.contactName, '联系人') &&
+        that.checkValidTel(that.contact.contactTel, '联系人电话'))
+        {
+          uni.showModal({
+            title: '提示信息',
+            content: '确认提交实名资料？',
+            success: function success(resp) {
+              if (resp.confirm) {
+                //比较哪些照片需要删除
+                var temp = [];
+                var values = [];
+                //从JSON中获取6张证件照片的云端存储地址
+                for (var key in that.currentImg) {
+                  var path = that.currentImg[key];
+                  values.push(path);
+                }
+                //判断cosImg数组里面哪些图片的云端地址不是6张图片的，这些图片要在云端删除
+                var _iterator = _createForOfIteratorHelper(that.cosImg),_step;try {for (_iterator.s(); !(_step = _iterator.n()).done;) {var one = _step.value;
+                    if (!values.includes(one)) {
+                      temp.push(one);
+                    }
+                  }} catch (err) {_iterator.e(err);} finally {_iterator.f();}
+                if (temp.length > 0) {
+                  //删除云端文件
+                  that.ajax(that.url.deleteCosPrivateFile, 'POST', JSON.stringify({ pathes: temp }), function () {
+                    console.log('文件删除成功');
+                  });
+                }
+                //需要上传的实名认证数据
+                var data = {
+                  pid: that.idcard.pid,
+                  name: that.idcard.name,
+                  sex: that.idcard.sex,
+                  birthday: that.idcard.birthday,
+                  tel: that.contact.tel,
+                  email: that.contact.email,
+                  mailAddress: that.contact.mailAddress,
+                  contactName: that.contact.contactName,
+                  contactTel: that.contact.contactTel,
+                  idcardAddress: that.idcard.address,
+                  idcardFront: that.currentImg.idcardFront,
+                  idcardBack: that.currentImg.idcardBack,
+                  idcardHolding: that.currentImg.idcardHolding,
+                  idcardExpiration: that.idcard.expiration,
+                  drcardType: that.drcard.carClass,
+                  drcardExpiration: that.drcard.validTo,
+                  drcardIssueDate: that.drcard.issueDate,
+                  drcardFront: that.currentImg.drcardFront,
+                  drcardBack: that.currentImg.drcardBack,
+                  drcardHolding: that.currentImg.drcardHolding };
+
+                //提交Ajax请求，上传数据
+                that.ajax(that.url.updateDriverAuth, 'POST', data, function (resp) {
+                  console.log('更新成功');
+                  that.$refs.uToast.show({
+                    title: '资料提交成功',
+                    type: 'success',
+                    callback: function callback() {
+                      uni.setStorageSync('realAuth', 3); //更新小程序Storage
+                      that.realAuth = 3; //更新模型层
+                      if (that.mode == 'create') {
+                        //提示新注册的司机采集面部数据
+                        uni.navigateTo({
+                          url: "../face_camera/face_camera?mode=create" });
+
+                      } else {
+                        //跳转到工作台页面
+                        uni.switchTab({
+                          url: '../../pages/workbench/workbench' });
+
+                      }
+                    } });
+
+                });
+              }
+            } });
+
+        }
+    },
+    showAddressContent: function showAddressContent() {
+      if (this.idcard.address.length > 0) {
+        uni.showModal({
+          title: '身份证地址',
+          content: this.idcard.address,
+          showCancel: false });
+
+      }
+    } },
 
   onLoad: function onLoad(options) {
     var that = this;
