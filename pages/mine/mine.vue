@@ -5,11 +5,7 @@
 			<view class="summary">
 				<view class="row">
 					<text class="name">{{ name }}</text>
-					<image
-						:src="realAuth ? '../../static/mine/icon-1.png' : '../../static/mine/icon-2.png'"
-						mode="widthFix"
-						class="auth-icon"
-					></image>
+					<image :src="realAuth ? '../../static/mine/icon-1.png' : '../../static/mine/icon-2.png'" mode="widthFix" class="auth-icon"></image>
 					<text :class="realAuth ? 'auth' : 'unauth'">{{ realAuth ? '已认证' : '未认证' }}</text>
 				</view>
 				<view class="row">
@@ -84,22 +80,10 @@
 			</view>
 		</view>
 		<u-cell-group :border="false">
-			<u-cell-item
-				icon="account-fill"
-				:icon-style="icon"
-				title="账号与安全"
-				:border-top="false"
-				@click="this.toPage('../../user/account/account')"
-			/>
+			<u-cell-item icon="account-fill" :icon-style="icon" title="账号与安全" :border-top="false" @click="this.toPage('../../user/account/account')" />
 			<u-cell-item icon="server-fill" :icon-style="icon" title="在线客服" @click="serviceHandle" />
 			<u-cell-item icon="trash-fill" :icon-style="icon" title="清理缓存" @click="clearHandle" />
-			<u-cell-item
-				icon="file-text-fill"
-				:icon-style="icon"
-				title="用户指南"
-				:border-bottom="false"
-				@click="this.toPage('../../rule/user_guide/user_guide')"
-			/>
+			<u-cell-item icon="file-text-fill" :icon-style="icon" title="用户指南" :border-bottom="false" @click="this.toPage('../../rule/user_guide/user_guide')" />
 		</u-cell-group>
 		<view class="exit"><button class="btn" @tap="logoutHandle()">退出系统</button></view>
 		<u-top-tips ref="uTips"></u-top-tips>
@@ -129,14 +113,111 @@ export default {
 		};
 	},
 	methods: {
-		
+		logoutHandle: function() {
+			let that = this;
+			uni.vibrateShort({});
+			uni.showModal({
+				title: '提示信息',
+				content: '确认退出系统？',
+				success: function(resp) {
+					if (resp.confirm) {
+						that.ajax(that.url.logout, 'GET', null, function(resp) {
+							uni.removeStorageSync('realAuth');
+							uni.removeStorageSync('token');
+							uni.showToast({
+								title: '已经退出系统',
+								success: function() {
+									setTimeout(function() {
+										uni.redirectTo({
+											url: '../login/login'
+										});
+									}, 1500);
+								}
+							});
+						});
+					}
+				}
+			});
+		},
+		serviceHandle: function() {
+			uni.vibrateShort({});
+			uni.makePhoneCall({
+				phoneNumber: '10086'
+			});
+		},
+		clearHandle: function() {
+			uni.vibrateShort({});
+			uni.showModal({
+				title: '提示信息',
+				content: '清理本地缓存',
+				success: function(resp) {
+					if(resp.confirm){
+						uni.vibrateShort({});
+						uni.showLoading({
+							title: '执行中'
+						})
+						let cache = uni.getStorageInfoSync();
+						for(let key of cache.keys){
+							if(key == 'token' || key == 'realAuth'){
+								continue;
+							}
+							uni.removeStorageSync(key);
+							console.log('删除Storage缓存成功')
+						}
+						uni.getSavedFileList({
+							success:function(resp){
+								for(let one of resp.fileList){
+									let path = one.filePath;
+									uni.removeSavedFile({
+										filePath: path,
+										success:function(){
+											console.log('缓存文件删除成功');
+										}
+									})
+								}
+							}
+						})
+						setTimeout(function(){
+							uni.hideLoading();
+							uni.showToast({
+								title: '清理完毕'
+							});
+						}, 500);
+					}
+				}
+			});
+		}
 	},
 	onShow: function() {
-		
+		let that = this;
+		that.ajax(that.url.searchDriverBaseInfo, 'POST', null, function(resp) {
+			let result = resp.data.result;
+			that.name = result.name;
+			that.photo = result.photo;
+			that.realAuth = uni.getStorageSync('realAuth') == 1;
+
+			let createTime = dayjs(result.createTime, 'YYYY-MM-DD');
+			let current = dayjs();
+			let years = current.diff(createTime, 'years');
+			that.years = years;
+			that.level = result.summary.level;
+			if (that.level < 10) {
+				that.levelName = '初级代驾';
+			} else if (that.level < 30) {
+				that.levelName = '中级代驾';
+			} else if (that.level < 50) {
+				that.levelName = '高级代驾';
+			} else {
+				that.levelName = '王牌代驾';
+			}
+			that.balance = result.balance;
+			that.totalOrder = result.summary.totalOrder;
+			that.weekOrder = result.summary.weekOrder;
+			that.weekComment = result.summary.weekComment;
+			that.appeal = result.summary.appeal;
+		});
 	},
-	onHide: function() {
-		
-	}
+	onHide: function() {}
 };
 </script>
 

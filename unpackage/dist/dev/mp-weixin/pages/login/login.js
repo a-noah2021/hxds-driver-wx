@@ -177,15 +177,81 @@ var _default =
     return {};
   },
   methods: {
+    login: function login(e) {
+      var that = this;
+      // console.log(e.detail.code)
+      // let phoneCode = e.detail.code;
+      uni.login({
+        provider: 'weixin',
+        success: function success(resp) {
+          var code = resp.code;
+          var data = {
+            code: code
+            // phoneCode: phoneCode
+          };
+          // console.log(data);
+          that.ajax(that.url.login, 'POST', data, function (resp) {
+            if (!resp.data.hasOwnProperty('token')) {
+              that.$refs.uToast.show({
+                title: '请先注册',
+                type: 'error' });
+
+            } else {
+              var token = resp.data.token;
+              var realAuth = resp.data.realAuth;
+              var archive = resp.data.archive;
+              uni.setStorageSync('token', token);
+              uni.setStorageSync('realAuth', realAuth);
+              uni.removeStorageSync('executeOrder');
+              that.$refs.uToast.show({
+                title: '登陆成功',
+                type: 'success',
+                callback: function callback() {
+                  uni.setStorageSync('workStatus', '停止接单');
+                  //检查用户是否没有填写实名信息
+                  if (realAuth == 1) {
+                    uni.redirectTo({
+                      url: '../../identity/filling/filling?mode=create' });
+
+                  } else if (archive == false) {
+                    //检查系统是否存有司机的面部数据
+                    uni.showModal({
+                      title: '提示消息',
+                      content: '您还没有录入用于核实身份的面部特征信息，如果不录入将无法接单',
+                      confirmText: '录入',
+                      cancelText: '取消',
+                      success: function success(resp) {
+                        if (resp.confirm) {
+                          //跳转到面部识别页面，采集人脸数据
+                          uni.redirectTo({
+                            url: '../../identity/face_camera/face_camera?mode=create' });
+
+                        } else {
+                          uni.switchTab({
+                            url: '../workbench/workbench' });
+
+                        }
+                      } });
+
+                  } else {
+                    uni.switchTab({
+                      url: '../workbench/workbench' });
+
+                  }
+                } });
+
+            }
+          });
+        } });
+
+    },
     toRegisterPage: function toRegisterPage() {
       uni.navigateTo({
-        url: "../register/register" });
+        url: '../register/register' });
 
     } },
 
-  onLoad: function onLoad() {
-
-  } };exports.default = _default;
+  onLoad: function onLoad() {} };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
 
 /***/ }),
