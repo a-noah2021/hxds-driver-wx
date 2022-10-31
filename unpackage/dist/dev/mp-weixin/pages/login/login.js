@@ -177,19 +177,16 @@ var _default =
     return {};
   },
   methods: {
-    login: function login(e) {
+    login: function login() {
       var that = this;
-      // console.log(e.detail.code)
-      // let phoneCode = e.detail.code;
       uni.login({
         provider: 'weixin',
         success: function success(resp) {
           var code = resp.code;
           var data = {
-            code: code
-            // phoneCode: phoneCode
-          };
-          // console.log(data);
+            code: code };
+
+          console.log(data);
           that.ajax(that.url.login, 'POST', data, function (resp) {
             if (!resp.data.hasOwnProperty('token')) {
               that.$refs.uToast.show({

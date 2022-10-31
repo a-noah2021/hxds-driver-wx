@@ -6,7 +6,7 @@
             <text class="name">（司机端）</text>
             <text class="version">Ver20XX.201</text>
         </view>
-        <button class="btn" open-type="getPhoneNumber" @getphonenumber="login">微信登陆</button>
+        <button class="btn" @tap="login()">微信登陆</button>
         <view class="register-container">
             没有账号?
             <text class="link" @tap="toRegisterPage()">立即注册</text>
@@ -22,19 +22,16 @@ export default {
         return {};
     },
     methods: {
-        login: function(e) {
+        login: function() {
             let that = this;
-            // console.log(e.detail.code)
-            // let phoneCode = e.detail.code;
             uni.login({
                 provider: 'weixin',
                 success: function(resp) {
                     let code = resp.code;
                     let data = {
-                        code: code,
-                        // phoneCode: phoneCode
+                        code: code
                     };
-                    // console.log(data);
+                    console.log(data);
                     that.ajax(that.url.login, 'POST', data, function(resp) {
                         if (!resp.data.hasOwnProperty('token')) {
                             that.$refs.uToast.show({
