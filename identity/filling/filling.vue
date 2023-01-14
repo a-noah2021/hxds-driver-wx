@@ -288,7 +288,7 @@ export default {
 							let temp = [];
 							let values = [];
 							//从JSON中获取6张证件照片的云端存储地址
-		 				for (let key in that.currentImg) {
+							for (let key in that.currentImg) {
 								let path = that.currentImg[key];
 								values.push(path);
 							}

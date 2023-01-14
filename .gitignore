@@ -1,37 +1,13 @@
-HELP.md
-target/
-!.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**
-!**/src/test/**
+### Example user template template
+### Example user template
 
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-
-### IntelliJ IDEA ###
+# IntelliJ project files
 .idea
-*.iws
 *.iml
-*.ipr
+out
+gen
 
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
+.hbuilderx
+unpackage
+node_modules
 
-### VS Code ###
-.vscode/
-
-### tx-lcn ###
-.txlcn
-
-### MacOS ###
-.DS_Store
