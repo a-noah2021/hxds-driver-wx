@@ -10,4 +10,4 @@ gen
 .hbuilderx
 unpackage
 node_modules
-
+.DS_Store
