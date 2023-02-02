@@ -85,6 +85,7 @@
 		 * 挂到后台依然可以使用GPS定位
 		 */
         "requiredBackgroundModes" : [ "location" ],
+		"requiredPrivateInfos" : [ "startLocationUpdate", "onLocationChange" ],
         "permission" : {
             "scope.userLocation" : {
                 "desc" : "请允许地图服务使用GPS定位"
