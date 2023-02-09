@@ -27,7 +27,7 @@ export default {
 				longitude: longitude
 			};
 			let workStatus = uni.getStorageSync('workStatus');
-			let baseUrl = 'http://vra6du.natappfree.cc/hxds-driver';
+			let baseUrl = 'http://6hw8pi.natappfree.cc/hxds-driver';
 			if (workStatus == '开始接单') {
 				// TODO 只在每分钟的前10秒上报定位信息，减小服务器压力
 				// let current = new Date();
