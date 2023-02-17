@@ -31,7 +31,7 @@ export function createApp() {
 
 
 // let baseUrl = "http://你自己电脑的IP地址（绝对不能写localhost和127.0.0.1）/hxds-driver"
-let baseUrl = "http://6hw8pi.natappfree.cc/hxds-driver"  //"http://127.0.0.1:8201/hxds-driver"
+let baseUrl = "http://7je7a2.natappfree.cc/hxds-driver"  //"http://127.0.0.1:8201/hxds-driver"
 Vue.prototype.url = {
 	registerNewDriver: `${baseUrl}/driver/registerNewDriver`,
 	updateDriverAuth: `${baseUrl}/driver/updateDriverAuth`,
@@ -48,6 +48,8 @@ Vue.prototype.url = {
 	stopWork: `${baseUrl}/driver/stopWork`,
 	receiveNewOrderMessage: `${baseUrl}/message/order/new/receiveNewOrderMessage`,
 	acceptNewOrder: `${baseUrl}/driver/acceptNewOrder`,
+	searchDriverExecuteOrder: `${baseUrl}/driver/searchDriverExecuteOrder`,
+	searchDriverCurrentOrder: `${baseUrl}/driver/searchDriverCurrentOrder`,
 }
 
 Vue.prototype.tencent = {
