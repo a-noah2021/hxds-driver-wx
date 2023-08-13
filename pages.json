@@ -54,7 +54,12 @@
 				"navigationBarTitleText": "系统消息",
 				"enablePullDownRefresh": false
 			}
-
+		}, {
+			"path": "pages/heat_chart/heat_chart",
+			"style": {
+				"navigationBarTitleText": "接单热点地区",
+				"enablePullDownRefresh": false
+			}
 		}
 	],
 	"tabBar": {
