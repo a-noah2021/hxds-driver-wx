@@ -41,7 +41,7 @@
 			
 			let map = wx.createMapContext('map');
 			map.addVisualLayer({
-				layerId: '88fdf7fdfb12',
+				layerId: '10f611245811',
 				interval: 5,
 				zIndex: 999,
 				success: function(resp) {

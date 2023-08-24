@@ -81,6 +81,7 @@
 		</view>
 		<u-cell-group :border="false">
 			<u-cell-item icon="account-fill" :icon-style="icon" title="账号与安全" :border-top="false" @click="this.toPage('../../user/account/account')" />
+			<u-cell-item icon="eye-fill" :icon-style="icon" title="接单热点地区" @click="this.toPage('../heat_chart/heat_chart')" />
 			<u-cell-item icon="server-fill" :icon-style="icon" title="在线客服" @click="serviceHandle" />
 			<u-cell-item icon="trash-fill" :icon-style="icon" title="清理缓存" @click="clearHandle" />
 			<u-cell-item icon="file-text-fill" :icon-style="icon" title="用户指南" :border-bottom="false" @click="this.toPage('../../rule/user_guide/user_guide')" />
