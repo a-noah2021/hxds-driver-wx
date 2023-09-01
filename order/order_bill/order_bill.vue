@@ -144,7 +144,36 @@ export default {
 		
 	},
 	onLoad: function(options) {
-		
+    let that = this;
+    that.orderId = options.orderId;
+    that.customerId = options.customerId;
+    let data = {
+      orderId: that.orderId
+    };
+    that.ajax(that.url.searchReviewDriverOrderBill, 'POST', data, function(resp) {
+      let result = resp.data.result;
+      that.favourFee = result.favourFee;
+      that.incentiveFee = result.incentiveFee;
+      that.realMileage = result.realMileage;
+      that.mileageFee = result.mileageFee;
+      that.baseMileagePrice = result.baseMileagePrice;
+      that.baseMileage = result.baseMileage;
+      that.exceedMileagePrice = result.exceedMileagePrice;
+      that.waitingFee = result.waitingFee;
+      that.baseMinute = result.baseMinute;
+      that.waitingMinute = result.waitingMinute;
+      that.exceedMinutePrice = result.exceedMinutePrice;
+      that.returnFee = result.returnFee;
+      that.baseReturnMileage = result.baseReturnMileage;
+      that.exceedReturnPrice = result.exceedReturnPrice;
+      that.returnMileage = result.returnMileage;
+      that.parkingFee = result.parkingFee;
+      that.tollFee = result.tollFee;
+      that.otherFee = result.otherFee;
+      that.total = result.total;
+      that.driverIncome = result.driverIncome;
+      that.taxFee = result.taxFee;
+    });
 	},
 	onShow: function() {
 		
