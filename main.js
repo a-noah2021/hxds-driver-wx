@@ -55,6 +55,7 @@ Vue.prototype.url = {
 	startDriving: `${baseUrl}/order/startDriving`,
 	uploadRecordFile: `${baseUrl}/monitoring/uploadRecordFile`,
 	updateOrderStatus: `${baseUrl}/order/updateOrderStatus`,
+	updateBillFee: `${baseUrl}/order/updateBillFee`,
 }
 
 Vue.prototype.tencent = {
