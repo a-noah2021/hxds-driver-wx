@@ -39,17 +39,78 @@ export default {
 		};
 	},
 	methods: {
-		
+		checkPaymentHandle: function() {
+			let that = this;
+			let data = {
+				orderId: that.orderId
+			};
+			that.ajax(that.url.updateOrderAboutPayment, 'POST', data, function(resp) {
+				let result = resp.data.result;
+				if (result == '付款成功') {
+					uni.showToast({
+						title: '客户已付款'
+					});
+					uni.setStorageSync('workStatus', '停止接单');
+					clearInterval(that.timer);
+					that.i = 0;
+					setTimeout(function() {
+						uni.switchTab({
+							url: '../../pages/workbench/workbench'
+						});
+					}, 2500);
+				} else {
+					uni.showToast({
+						icon: '未检测到成功付款'
+					});
+				}
+			});
+		}
 	},
 	onLoad: function(options) {
-		
+		let that = this;
+		that.orderId = options.orderId;
+		that.timer = setInterval(function() {
+			that.i++;
+			if (that.i % 2 == 0) {
+				let data = {
+					orderId: that.orderId
+				};
+				that.ajax(
+					that.url.searchOrderStatus,
+					'POST',
+					data,
+					function(resp) {
+						if (!resp.data.hasOwnProperty('result')) {
+							uni.showToast({
+								icon: 'none',
+								title: '没有找到订单'
+							});
+							clearInterval(that.timer);
+							that.i = 0;
+						} else {
+							let result = resp.data.result;
+							if (result == 7 || result == 8) {
+								uni.showToast({
+									title: '客户已付款'
+								});
+								uni.setStorageSync('workStatus', '停止接单');
+								clearInterval(that.timer);
+								that.i = 0;
+								setTimeout(function() {
+									uni.switchTab({
+										url: '../../pages/workbench/workbench'
+									});
+								}, 2500);
+							}
+						}
+					},
+					false
+				);
+			}
+		}, 1000);
 	},
-	onShow: function() {
-		
-	},
-	onHide: function() {
-		
-	}
+	onShow: function() {},
+	onHide: function() {}
 };
 </script>
 

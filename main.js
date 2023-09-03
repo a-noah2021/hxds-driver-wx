@@ -57,6 +57,8 @@ Vue.prototype.url = {
 	updateOrderStatus: `${baseUrl}/order/updateOrderStatus`,
 	updateBillFee: `${baseUrl}/order/updateBillFee`,
 	searchReviewDriverOrderBill: `${baseUrl}/order/searchReviewDriverOrderBill`,
+	searchOrderStatus: `${baseUrl}/order/searchOrderStatus`,
+	updateOrderAboutPayment: `${baseUrl}/order/updateOrderAboutPayment`,
 }
 
 Vue.prototype.tencent = {
