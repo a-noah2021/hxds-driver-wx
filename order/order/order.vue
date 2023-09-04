@@ -136,7 +136,9 @@
 								active-color="#FFBB2A"
 								size="40"
 							/>
-							<view v-if="comment.value <= 2 && comment.status == 1" @tap="appeal.showAppeal = true">
+              <!--在页面上面我要申诉的文字只有在status是1状态(未申诉),并且是差评的条件下才会出现。点击该
+              文字,申诉弹窗会自动显示。另外申诉中的文字是在差评并!且status是2状态(已申诉)的时候才会显示-->
+              <view v-if="comment.value <= 2 && comment.status == 1" @tap="appeal.showAppeal = true">
 								我要申诉
 							</view>
 							<view v-if="comment.value <= 2 && comment.status == 2">申诉中</view>
@@ -233,10 +235,100 @@ export default {
 		};
 	},
 	methods: {
-		
+    enterFeeHandle: function() {
+      uni.navigateTo({
+        url: '../enter_fee/enter_fee?orderId=' + this.orderId + '&customerId=' + this.customerId
+      });
+    },
+    insertAppeal: function() {
+      let that = this;
+      if (that.appeal.reason == null || that.appeal.reason.length == 0) {
+        uni.showToast({
+          icon: 'error',
+          title: '申诉原因不能为空'
+        });
+        return;
+      }
+      let data = {
+        orderId: that.orderId,
+        customerId: that.customerId,
+        reason: that.appeal.reason
+      };
+      that.ajax(that.url.startCommentWorkflow, 'POST', data, function(resp) {
+        that.appeal.showAppeal = false;
+        that.comment.status = 2;
+        setTimeout(function() {
+          uni.showToast({
+            icon: 'success',
+            title: '申诉提交成功'
+          });
+        }, 1000);
+      });
+    }
 	},
 	onLoad: function(options) {
-		
+    let that = this;
+    let orderId = options.orderId;
+    that.orderId = orderId;
+    let data = {
+      orderId: orderId
+    };
+    that.ajax(that.url.searchOrderById, 'POST', data, function(resp) {
+      let result = resp.data.result;
+      that.customerId = result.customerId;
+      that.photo = result.photo;
+      that.title = result.title;
+      that.tel = result.tel;
+      that.startPlace = result.startPlace;
+      that.endPlace = result.endPlace;
+      that.createTime = result.createTime;
+      that.favourFee = result.favourFee;
+      that.incentiveFee = result.incentiveFee;
+      that.carPlate = result.carPlate;
+      that.carType = result.carType;
+      let status = result.status;
+      that.status = status;
+      if ([5, 6, 7, 8].includes(status)) {
+        that.realMileage = result.realMileage;
+        that.mileageFee = result.mileageFee;
+        that.waitingFee = result.waitingFee;
+        that.waitingMinute = result.waitingMinute;
+        that.returnFee = result.returnFee;
+        that.returnMileage = result.returnMileage;
+        that.parkingFee = result.parkingFee;
+        that.tollFee = result.tollFee;
+        that.otherFree = result.otherFree;
+        that.total = result.total;
+        that.voucherFee = result.voucherFee;
+      }
+      that.baseMileagePrice = result.baseMileagePrice;
+      that.baseMileage = result.baseMileage;
+      that.exceedMileagePrice = result.exceedMileagePrice;
+      // that.createTime = result.createTime;
+      that.base_minute = result.baseMinute;
+      that.exceedMinutePrice = result.exceedMinutePrice;
+      that.baseReturnMileage = result.baseReturnMileage;
+      that.exceedReturnPrice = result.exceedReturnPrice;
+      that.realPay = '--';
+      if ([2, 3].includes(status)) {
+        that.img = '../static/order/icon-1.png';
+      } else if ([4].includes(status)) {
+        that.img = '../static/order/icon-2.png';
+      } else if ([5, 6].includes(status)) {
+        that.img = '../static/order/icon-3.png';
+      } else if ([7].includes(status)) {
+        that.img = '../static/order/icon-4.png';
+        that.realPay = result.realPay;
+      } else if ([8, 9, 10, 11, 12].includes(status)) {
+        that.img = '../static/order/icon-5.png';
+        that.realPay = result.realPay;
+      }
+      that.comment.value = result.comment.rate;
+      if (result.comment.hasOwnProperty('remark')) {
+        that.comment.remark = result.comment.remark;
+        that.comment.status = result.comment.status;
+      }
+    });
 	},
 	onShow: function() {},
 	onHide: function() {}

@@ -59,6 +59,9 @@ Vue.prototype.url = {
 	searchReviewDriverOrderBill: `${baseUrl}/order/searchReviewDriverOrderBill`,
 	searchOrderStatus: `${baseUrl}/order/searchOrderStatus`,
 	updateOrderAboutPayment: `${baseUrl}/order/updateOrderAboutPayment`,
+	searchDriverOrderByPage: `${baseUrl}/order/searchDriverOrderByPage`,
+	searchOrderById: `${baseUrl}/order/searchOrderById`,
+	startCommentWorkflow: `${baseUrl}/order/startCommentWorkflow`,
 }
 
 Vue.prototype.tencent = {
